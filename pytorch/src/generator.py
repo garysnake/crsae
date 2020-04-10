@@ -27,6 +27,7 @@ def get_MNIST_loaders(batch_size, shuffle=False, train_batch=None, test_batch=No
 
 
 def get_MNIST_loader(batch_size, trainable=True, shuffle=False):
+    
     loader = torch.utils.data.DataLoader(
         torchvision.datasets.MNIST(
             "../data",

@@ -221,7 +221,7 @@ class CRsAE2D(torch.nn.Module):
         z = (
             torch.masked_select(
                 F.conv_transpose2d(x_new, self.get_param("H"), stride=self.stride),
-                valids_batched.byte(),
+                valids_batched.bool(),
             ).reshape(x.shape[0], self.stride ** 2, *x.shape[1:])
         ).mean(dim=1, keepdim=False)
 
@@ -355,7 +355,7 @@ class CRsAE2DFreeBias(torch.nn.Module):
         z = (
             torch.masked_select(
                 F.conv_transpose2d(x_new, self.get_param("H"), stride=self.stride),
-                valids_batched.byte(),
+                valids_batched.bool(),
             ).reshape(x.shape[0], self.stride ** 2, *x.shape[1:])
         ).mean(dim=1, keepdim=False)
 
@@ -504,7 +504,7 @@ class CRsAE2DUntied(torch.nn.Module):
         z = (
             torch.masked_select(
                 F.conv_transpose2d(x_new, self.get_param("Wd"), stride=self.stride),
-                valids_batched.byte(),
+                valids_batched.bool(),
             ).reshape(x.shape[0], self.stride ** 2, *x.shape[1:])
         ).mean(dim=1, keepdim=False)
 
@@ -652,7 +652,7 @@ class CRsAE2DUntiedFreeBias(torch.nn.Module):
         z = (
             torch.masked_select(
                 F.conv_transpose2d(x_new, self.get_param("Wd"), stride=self.stride),
-                valids_batched.byte(),
+                valids_batched.bool(),
             ).reshape(x.shape[0], self.stride ** 2, *x.shape[1:])
         ).mean(dim=1, keepdim=False)
 
@@ -784,7 +784,7 @@ class CRsAE2DTrainableBias(torch.nn.Module):
         z = (
             torch.masked_select(
                 F.conv_transpose2d(x_new, self.get_param("H"), stride=self.stride),
-                valids_batched.byte(),
+                valids_batched.bool(),
             ).reshape(x.shape[0], self.stride ** 2, *x.shape[1:])
         ).mean(dim=1, keepdim=False)
 
@@ -927,7 +927,7 @@ class CRsAE2DUntiedTrainableBias(torch.nn.Module):
         z = (
             torch.masked_select(
                 F.conv_transpose2d(x_new, self.get_param("Wd"), stride=self.stride),
-                valids_batched.byte(),
+                valids_batched.bool(),
             ).reshape(x.shape[0], self.stride ** 2, *x.shape[1:])
         ).mean(dim=1, keepdim=False)
 

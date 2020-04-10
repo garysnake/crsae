@@ -6,6 +6,12 @@ train
 :author: Bahareh Tolooshams
 """
 
+import os
+import pickle
+from datetime import datetime
+from sacred import Experiment
+from sacred import SETTINGS
+
 import torch
 from torch.utils.data import Dataset, DataLoader
 import torch.optim as optim
@@ -13,15 +19,11 @@ import torch.nn.functional as F
 import torchvision
 import matplotlib.pyplot as plt
 import numpy as np
-import pickle
 
 from sparselandtools.dictionaries import DCTDictionary
-import os
-from tqdm import tqdm
-from datetime import datetime
-from sacred import Experiment
 
-from sacred import SETTINGS
+from tqdm import tqdm
+
 
 SETTINGS.CONFIG.READ_ONLY_CONFIG = False
 
@@ -50,7 +52,7 @@ def run(cfg):
     hyp = cfg["hyp"]
 
     print(hyp)
-
+c
     random_date = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
     PATH = "../results/{}/{}".format(hyp["experiment_name"], random_date)
@@ -79,6 +81,14 @@ def run(cfg):
             year=hyp["year"],
         )
         test_loader = generator.get_path_loader(1, hyp["test_path"], shuffle=False)
+    # Support on MINST Added
+    if hyp["dataset"] == "MNIST":
+        train_loader, test_loader = generator.get_MNIST_loaders(
+            batch_size=hyp["batch_size"],
+            shuffle=hyp["shuffle"],
+            train_batch=hyp["batch_size"],
+            test_batch=hyp["batch_size"]
+        )
     else:
         print("dataset is not implemented.")
 
