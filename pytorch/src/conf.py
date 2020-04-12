@@ -29,7 +29,7 @@ def cfg():
         "trainable_bias": False,
         "delta": 50,
         "num_iters": 50,
-        "batch_size": 100,
+        "batch_size": 50,
         "num_epochs": 10,
         "normalize": True,
         "lr": 5e-5,

@@ -110,7 +110,7 @@ class CRsAE2D(torch.nn.Module):
                 (self.num_conv, 1, self.dictionary_dim, self.dictionary_dim),
                 device=self.device,
             )
-            H = F.normalize(H, p="fro", dim=(-1, -2))
+            H = F.normalize(H, p=2, dim=(-1, -2))
         self.register_parameter("H", torch.nn.Parameter(H))
 
         self.relu = torch.nn.ReLU()
@@ -120,7 +120,7 @@ class CRsAE2D(torch.nn.Module):
 
     def normalize(self):
         self.get_param("H").data = F.normalize(
-            self.get_param("H").data, p="fro", dim=(-1, -2)
+            self.get_param("H").data, p=2, dim=(-1, -2)
         )
 
     def split_image(self, x):
@@ -245,7 +245,7 @@ class CRsAE2DFreeBias(torch.nn.Module):
                 (self.num_conv, 1, self.dictionary_dim, self.dictionary_dim),
                 device=self.device,
             )
-            H = F.normalize(H, p="fro", dim=(-1, -2))
+            H = F.normalize(H, p=2, dim=(-1, -2))
         self.register_parameter("H", torch.nn.Parameter(H))
 
         self.b = torch.nn.Parameter(
@@ -260,7 +260,7 @@ class CRsAE2DFreeBias(torch.nn.Module):
 
     def normalize(self):
         self.get_param("H").data = F.normalize(
-            self.get_param("H").data, p="fro", dim=(-1, -2)
+            self.get_param("H").data, p=2, dim=(-1, -2)
         )
 
     def split_image(self, x):
@@ -380,7 +380,7 @@ class CRsAE2DUntied(torch.nn.Module):
                 (self.num_conv, 1, self.dictionary_dim, self.dictionary_dim),
                 device=self.device,
             )
-            H = F.normalize(H, p="fro", dim=(-1, -2))
+            H = F.normalize(H, p=2, dim=(-1, -2))
 
         We = torch.clone(H)
         Wd = torch.clone(H)
@@ -396,13 +396,13 @@ class CRsAE2DUntied(torch.nn.Module):
 
     def normalize(self):
         self.get_param("H").data = F.normalize(
-            self.get_param("H").data, p="fro", dim=(-1, -2)
+            self.get_param("H").data, p=2, dim=(-1, -2)
         )
         self.get_param("We").data = F.normalize(
-            self.get_param("We").data, p="fro", dim=(-1, -2)
+            self.get_param("We").data, p=2, dim=(-1, -2)
         )
         self.get_param("Wd").data = F.normalize(
-            self.get_param("Wd").data, p="fro", dim=(-1, -2)
+            self.get_param("Wd").data, p=2, dim=(-1, -2)
         )
 
     def split_image(self, x):
@@ -529,7 +529,7 @@ class CRsAE2DUntiedFreeBias(torch.nn.Module):
                 (self.num_conv, 1, self.dictionary_dim, self.dictionary_dim),
                 device=self.device,
             )
-            H = F.normalize(H, p="fro", dim=(-1, -2))
+            H = F.normalize(H, p=2, dim=(-1, -2))
 
         We = torch.clone(H)
         Wd = torch.clone(H)
@@ -550,13 +550,13 @@ class CRsAE2DUntiedFreeBias(torch.nn.Module):
 
     def normalize(self):
         self.get_param("H").data = F.normalize(
-            self.get_param("H").data, p="fro", dim=(-1, -2)
+            self.get_param("H").data, p=2, dim=(-1, -2)
         )
         self.get_param("We").data = F.normalize(
-            self.get_param("We").data, p="fro", dim=(-1, -2)
+            self.get_param("We").data, p=2, dim=(-1, -2)
         )
         self.get_param("Wd").data = F.normalize(
-            self.get_param("Wd").data, p="fro", dim=(-1, -2)
+            self.get_param("Wd").data, p=2, dim=(-1, -2)
         )
 
     def split_image(self, x):
@@ -678,7 +678,7 @@ class CRsAE2DTrainableBias(torch.nn.Module):
                 (self.num_conv, 1, self.dictionary_dim, self.dictionary_dim),
                 device=self.device,
             )
-            H = F.normalize(H, p="fro", dim=(-1, -2))
+            H = F.normalize(H, p=2, dim=(-1, -2))
         self.register_parameter("H", torch.nn.Parameter(H))
 
         self.relu = RELUTwosided(
@@ -690,7 +690,7 @@ class CRsAE2DTrainableBias(torch.nn.Module):
 
     def normalize(self):
         self.get_param("H").data = F.normalize(
-            self.get_param("H").data, p="fro", dim=(-1, -2)
+            self.get_param("H").data, p=2, dim=(-1, -2)
         )
 
     def split_image(self, x):
@@ -810,7 +810,7 @@ class CRsAE2DUntiedTrainableBias(torch.nn.Module):
                 (self.num_conv, 1, self.dictionary_dim, self.dictionary_dim),
                 device=self.device,
             )
-            H = F.normalize(H, p="fro", dim=(-1, -2))
+            H = F.normalize(H, p=2, dim=(-1, -2))
 
         We = torch.clone(H)
         Wd = torch.clone(H)
@@ -828,13 +828,13 @@ class CRsAE2DUntiedTrainableBias(torch.nn.Module):
 
     def normalize(self):
         self.get_param("H").data = F.normalize(
-            self.get_param("H").data, p="fro", dim=(-1, -2)
+            self.get_param("H").data, p=2, dim=(-1, -2)
         )
         self.get_param("We").data = F.normalize(
-            self.get_param("We").data, p="fro", dim=(-1, -2)
+            self.get_param("We").data, p=2, dim=(-1, -2)
         )
         self.get_param("Wd").data = F.normalize(
-            self.get_param("Wd").data, p="fro", dim=(-1, -2)
+            self.get_param("Wd").data, p=2, dim=(-1, -2)
         )
 
     def split_image(self, x):

@@ -52,7 +52,7 @@ def run(cfg):
     hyp = cfg["hyp"]
 
     print(hyp)
-c
+
     random_date = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
     PATH = "../results/{}/{}".format(hyp["experiment_name"], random_date)
