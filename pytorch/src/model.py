@@ -46,7 +46,6 @@ class CRsAE1D(torch.nn.Module):
             H = torch.randn((self.num_conv, 1, self.dictionary_dim), device=self.device)
             H = F.normalize(H, p=2, dim=-1)
         self.register_parameter("H", torch.nn.Parameter(H))
-
         self.relu = torch.nn.ReLU()
 
     def get_param(self, name):
@@ -171,18 +170,16 @@ class CRsAE2D(torch.nn.Module):
         x_batched_padded, valids_batched = self.split_image(x)
 
         num_batches = x_batched_padded.shape[0]
-
-        D_enc1 = F.conv2d(
+        D_enc1, D_enc2 =  F.conv2d(
             x_batched_padded, self.get_param("H"), stride=self.stride
-        ).shape[2]
-        D_enc2 = F.conv2d(
-            x_batched_padded, self.get_param("H"), stride=self.stride
-        ).shape[3]
+        ).shape[2:4]
 
         x_old = torch.zeros(
             num_batches, self.num_conv, D_enc1, D_enc2, device=self.device
         )
-        yk = torch.zeros(num_batches, self.num_conv, D_enc1, D_enc2, device=self.device)
+        yk = torch.zeros(
+            num_batches, self.num_conv, D_enc1, D_enc2, device=self.device
+        )
         x_new = torch.zeros(
             num_batches, self.num_conv, D_enc1, D_enc2, device=self.device
         )

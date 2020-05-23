@@ -59,11 +59,13 @@ def train_ae(
                         )
                     )
                 np.save(os.path.join(PATH, "psnr_init.npy"), np.array(psnr))
-                print("PSNR: {}".format(np.round(np.array(psnr), decimals=4)))
+                print("PSNR: {}".format(np.round(np.mean(psnr), decimals=4)))
+
+    
 
     for epoch in tqdm(range(epoch_start, epoch_end)):
         scheduler.step()
-        loss_all = 0
+        loss_all = []
         for idx, (img, _) in tqdm(enumerate(data_loader)):
             optimizer.zero_grad()
             if supervised:
@@ -82,7 +84,7 @@ def train_ae(
 
                 loss = criterion(noisy_img, img_hat)
 
-            loss_all += float(loss.item())
+            loss_all.append(float(loss.item()))
             # ===================backward====================
             optimizer.zero_grad()
             loss.backward()
@@ -120,9 +122,9 @@ def train_ae(
                         np.array(psnr),
                     )
                     print("")
-                    print("PSNR: {}".format(np.round(np.array(psnr), decimals=4)))
+                    print("PSNR: {}".format(np.round(np.mean(psnr), decimals=4)))
 
-        torch.save(loss_all, os.path.join(PATH, "loss_epoch{}.pt".format(epoch)))
+        np.save(os.path.join(PATH, "loss_epoch{}.pt".format(epoch)), np.array(loss_all))
 
         torch.save(net, os.path.join(PATH, "model_epoch{}.pt".format(epoch)))
 
@@ -177,33 +179,43 @@ def train_ae_withtrainablebias(
                             img_test_hat[0, 0, :, :].clone().detach().cpu().numpy(),
                         )
                     )
+                # ============ Saved an initialization parameter
                 np.save(os.path.join(PATH, "psnr_init.npy"), np.array(psnr))
-                print("PSNR: {}".format(np.round(np.array(psnr), decimals=4)))
+                print("PSNR: {}".format(np.round(np.mean(psnr), decimals=4)))
 
+    # ========================== Training Part for inference
     for epoch in tqdm(range(epoch_start, epoch_end)):
         scheduler.step()
-        loss_all = 0
+        loss_all = []
+        # L1_list = []
         for idx, (img, _) in tqdm(enumerate(data_loader)):
-            optimizer_ae.zero_grad()
-            optimizer_lam.zero_grad()
-            if supervised:
-                img = img.to(device)
-                noise = noiseSTD / 255 * torch.randn(img.shape).to(device)
+            redo = 0
+            redo_max = 1
+            for redo in range(redo_max):
+                optimizer_ae.zero_grad()
+                optimizer_lam.zero_grad()
+                if supervised:
+                    img = img.to(device)
+                    noise = noiseSTD / 255 * torch.randn(img.shape).to(device)
 
-                # ===================forward=====================
-                output = net(img + noise)
+                    # ===================forward=====================
+                    output = net(img + noise)
 
-                loss_ae = criterion_ae(img, output[0])
-                loss_lam = criterion_lam(output[1:], hyp)
-            else:
-                noisy_img = (img + noiseSTD / 255 * torch.randn(img.shape)).to(device)
-                # ===================forward=====================
-                output = net(noisy_img)
+                    loss_ae = criterion_ae(img, output[0])
+                    loss_lam = criterion_lam(output[1:], hyp)
+                else:
+                    noisy_img = (img + noiseSTD / 255 * torch.randn(img.shape)).to(device)
+                    # ===================forward=====================
+                    output = net(noisy_img)
 
-                loss_ae = criterion_ae(noisy_img, output[0])
-                loss_lam = criterion_lam(output[1:], hyp)
+                    loss_ae = criterion_ae(noisy_img, output[0])
+                    loss_lam = criterion_lam(output[1:], hyp)
 
-            loss_all += loss_ae.item()
+            loss_all.append(float(loss_ae.item()))
+
+            # Log norm
+            # L1_norm = torch.norm(output[1], p=1).detach().cpu().numpy()
+            # L1_list.append(torch.norm(output[1], p=1).detach().cpu().numpy())
             # ===================backward====================
             optimizer_ae.zero_grad()
             optimizer_lam.zero_grad()
@@ -219,8 +231,14 @@ def train_ae_withtrainablebias(
 
             if idx % info_period == 0:
                 print("loss ae:{:.8f} ".format(loss_ae.item()))
+                # print("L1: {}".format(L1_norm))
 
         # ===================log========================
+        # np.save(
+        #     os.path.join(PATH, "L1_epoch{}.npy".format(epoch)),
+        #     np.array(L1_list),
+        # )
+        # print("L1 of H Mean: {}".format(np.round(np.mean(L1_list), decimals=4)))
 
         if hyp["denoising"]:
             if test_loader is not None:
@@ -243,15 +261,17 @@ def train_ae_withtrainablebias(
                         os.path.join(PATH, "psnr_epoch{}.npy".format(epoch)),
                         np.array(psnr),
                     )
-                    print("PSNR: {}".format(np.round(np.array(psnr), decimals=4)))
+                    print("PSNR: {}".format(np.round(np.mean(psnr), decimals=4)))
 
-        torch.save(loss_all, os.path.join(PATH, "loss_epoch{}.pt".format(epoch)))
+        # ================= Save loss =========
+        np.save(os.path.join(PATH, "loss_epoch{}.".format(epoch)), np.array(loss_all))
 
+        # ================= Save Model =========
         torch.save(net, os.path.join(PATH, "model_epoch{}.pt".format(epoch)))
 
         print(
             "epoch [{}/{}], loss:{:.8f} ".format(
-                epoch + 1, hyp["num_epochs"], loss_ae.item()
+                epoch + 1, hyp["num_epochs"], np.mean(np.array(loss_all))
             )
         )
 

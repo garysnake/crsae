@@ -17,26 +17,31 @@ device = torch.device("cuda:0" if use_cuda else "cpu")
 
 
 @config_ingredient.config
+# MNIST dataset config set
+# earlier is 64
+# later is 36
 def cfg():
     hyp = {
         "experiment_name": "default",
-        "dataset": "MNIST",
-        "network": "CRsAE2D",
-        "dictionary_dim": 5,
+        "dataset": "VOC",
+        "network": "CRsAE2DUntiedTrainableBias",
+        "dictionary_dim": 7,
         "num_conv": 64,
         "stride": 6,
-        "L": 100,
-        "trainable_bias": False,
+        "L": 5,
+        "trainable_bias": True,
         "delta": 50,
-        "num_iters": 50,
-        "batch_size": 50,
-        "num_epochs": 10,
+        "num_iters": 100,
+        "batch_size": 1,
+        "num_epochs": 15,
         "normalize": True,
-        "lr": 5e-5,
+        "lr": 0.0005,
         "lr_decay": 0.7,
-        "lr_step": 10,
-        "lr_lam": 1e-2,
+        "lr_step": 20,
+        "lr_lam": 1e-4,
         "cyclic": False,
+        # "base_lr":5e-05,
+        # "max_lr": 0.0005,
         "noiseSTD": 20,
         "shuffle": True,
         "test_path": "../data/test_img/",
@@ -47,15 +52,16 @@ def cfg():
         "denoising": True,
         "supervised": True,
         "crop_dim": (250, 250),
-        "init_with_DCT": True,
+        "init_with_DCT": False,
         "init_with_saved_file": False,
         "sigma": 0.18,
-        "loss": "MSE",
+        "loss": "L1",
         "lam": 0.1,
         "twosided": True,
         "image_set": "train",
         "year": "2012",
         "segmentation": True,
+        "redo":1
     }
 
 
@@ -68,7 +74,7 @@ def crsae_msssim():
         "year": "2012",
         "segmentation": False,
         "network": "CRsAE2DUntiedTrainableBias",
-        "dictionary_dim": 7,
+        "dictionary_dim": 4,
         "stride": 5,
         "num_conv": 64,
         "L": 10,
@@ -80,7 +86,7 @@ def crsae_msssim():
         "lr_lam": 0.1,
         "lr_decay": 0.7,
         "lr_step": 10,
-        "noiseSTD": 20,
+        "noiseSTD": 0,
         "sigma": 0.078,
         "shuffle": True,
         "test_path": "../data/test_img/",

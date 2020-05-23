@@ -1,0 +1,69 @@
+torch.Size([12, 30, 30])
+experiment_name: default
+dataset: MNIST
+network: CRsAE2DUntiedTrainableBias
+dictionary_dim: 30
+num_conv: 12
+stride: 6
+L: 5
+trainable_bias: True
+delta: 50
+num_iters: 3
+batch_size: 10
+num_epochs: 6
+normalize: True
+lr: 0.0005
+lr_decay: 0.7
+lr_step: 20
+lr_lam: 0.0001
+cyclic: True
+base_lr: 5e-05
+max_lr: 0.0005
+noiseSTD: 20
+shuffle: True
+test_path: ../data/test_img/
+train_path: ../data/test_img/
+device: cuda:0
+warm_start: True
+info_period: 10
+denoising: True
+supervised: True
+crop_dim: [250, 250]
+init_with_DCT: False
+init_with_saved_file: False
+sigma: 0.18
+loss: L1
+lam: 0.1
+twosided: True
+image_set: train
+year: 2012
+segmentation: True
+
+
+1 Alternation
+0.210085190637038
+20.331092695789412
+21.037430286509917
+21.27574903935194
+21.338265000656246
+21.465649631572887
+21.438407281739636
+
+5 Alternation
+10.211272488124669
+20.472339943246915
+21.14657336851582
+21.241028607366605
+21.296184690892698
+21.276252211034297
+21.37694748284295
+
+10 Alternation
+
+10.160510589713232
+20.47066314993426
+21.046507907276972
+21.217256957972424
+21.36509639970027
+21.27111476434395
+21.38995085209608

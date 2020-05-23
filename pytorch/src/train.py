@@ -81,7 +81,7 @@ def run(cfg):
             year=hyp["year"],
         )
         test_loader = generator.get_path_loader(1, hyp["test_path"], shuffle=False)
-    # Support on MINST Added
+    # Support on MNIST Added
     if hyp["dataset"] == "MNIST":
         train_loader, test_loader = generator.get_MNIST_loaders(
             batch_size=hyp["batch_size"],
@@ -89,17 +89,18 @@ def run(cfg):
             train_batch=hyp["batch_size"],
             test_batch=hyp["batch_size"]
         )
-    else:
-        print("dataset is not implemented.")
 
     if hyp["init_with_DCT"]:
         dct_dictionary = DCTDictionary(
             hyp["dictionary_dim"], np.int(np.sqrt(hyp["num_conv"]))
         )
+        print("=============================")
+        print(str(dct_dictionary.matrix.size))
         H_init = dct_dictionary.matrix.reshape(
             hyp["dictionary_dim"], hyp["dictionary_dim"], hyp["num_conv"]
         ).T
         H_init = np.expand_dims(H_init, axis=1)
+        
         H_init = torch.from_numpy(H_init).float().to(hyp["device"])
     else:
         H_init = None
@@ -133,6 +134,7 @@ def run(cfg):
             criterion_ae = torch.nn.L1Loss()
         elif hyp["loss"] == "MSSSIM_l1":
             criterion_ae = utils.MSSSIM_l1()
+            
         criterion_lam = utils.LambdaLoss2D()
 
         param_ae = []
@@ -173,14 +175,16 @@ def run(cfg):
                 optimizer,
                 base_lr=hyp["base_lr"],
                 max_lr=hyp["max_lr"],
-                step_size_up=hyp["step_size"],
-                cycle_momentum=False,
+                step_size_up=hyp["lr_step"],
+                gamma=hyp["lr_decay"],
+                cycle_momentum=False
             )
         else:
             scheduler = optim.lr_scheduler.StepLR(
                 optimizer, step_size=hyp["lr_step"], gamma=hyp["lr_decay"]
             )
 
+    # TRAINING PART will call trainer's train method
     print("train auto-encoder.")
     if hyp["trainable_bias"]:
         net = trainer.train_ae_withtrainablebias(
