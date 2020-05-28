@@ -917,6 +917,7 @@ class CRsAE2DUntiedTrainableBias(torch.nn.Module):
 
             t_new = (1 + torch.sqrt(1 + 4 * t_old * t_old)) / 2
             yk = x_new + ((t_old - 1) / t_new) * (x_new - x_old)
+            
 
             x_old = x_new
             t_old = t_new

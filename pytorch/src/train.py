@@ -72,7 +72,7 @@ def run(cfg):
         )
         test_loader = generator.get_path_loader(1, hyp["test_path"], shuffle=False)
     if hyp["dataset"] == "VOC":
-        train_loader, _ = generator.get_VOC_loaders(
+        train_loader, test_loader = generator.get_VOC_loaders(
             hyp["batch_size"],
             crop_dim=hyp["crop_dim"],
             shuffle=hyp["shuffle"],
@@ -80,7 +80,7 @@ def run(cfg):
             segmentation=hyp["segmentation"],
             year=hyp["year"],
         )
-        test_loader = generator.get_path_loader(1, hyp["test_path"], shuffle=False)
+        # test_loader = generator.get_path_loader(1, hyp["test_path"], shuffle=False)
     # Support on MNIST Added
     if hyp["dataset"] == "MNIST":
         train_loader, test_loader = generator.get_MNIST_loaders(
