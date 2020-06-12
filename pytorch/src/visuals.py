@@ -1,3 +1,8 @@
+import torch
+import torch.nn.functional as F
+import utils
+
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -51,3 +56,47 @@ def visualize_dictionary(img_tensor):
         plt.imshow(img)
     plt.show()
 
+
+def split_image(x, stride, dictionary_dim, device):
+        if stride == 1:
+            return x, torch.ones_like(x)
+        left_pad, right_pad, top_pad, bot_pad = utils.calc_pad_sizes(
+            x, dictionary_dim, stride
+        )
+        x_batched_padded = torch.zeros(
+            x.shape[0],
+            stride ** 2,
+            x.shape[1],
+            top_pad + x.shape[2] + bot_pad,
+            left_pad + x.shape[3] + right_pad,
+            device=device,
+        ).type_as(x)
+        valids_batched = torch.zeros_like(x_batched_padded)
+        for num, (row_shift, col_shift) in enumerate(
+            [(i, j) for i in range(stride) for j in range(stride)]
+        ):
+            x_padded = F.pad(
+                x,
+                pad=(
+                    left_pad - col_shift,
+                    right_pad + col_shift,
+                    top_pad - row_shift,
+                    bot_pad + row_shift,
+                ),
+                mode="reflect",
+            )
+            valids = F.pad(
+                torch.ones_like(x),
+                pad=(
+                    left_pad - col_shift,
+                    right_pad + col_shift,
+                    top_pad - row_shift,
+                    bot_pad + row_shift,
+                ),
+                mode="constant",
+            )
+            x_batched_padded[:, num, :, :, :] = x_padded
+            valids_batched[:, num, :, :, :] = valids
+        x_batched_padded = x_batched_padded.reshape(-1, *x_batched_padded.shape[2:])
+        valids_batched = valids_batched.reshape(-1, *valids_batched.shape[2:])
+        return x_batched_padded, valids_batched

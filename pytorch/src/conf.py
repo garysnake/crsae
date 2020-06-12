@@ -22,8 +22,8 @@ device = torch.device("cuda:0" if use_cuda else "cpu")
 # later is 36
 def cfg():
     hyp = {
-        "experiment_name": "default",
-        "dataset": "VOC",
+        "experiment_name": "MNIST_feature_tests",
+        "dataset": "MNIST",
         "network": "CRsAE2DUntiedTrainableBias",
         "dictionary_dim": 7,
         "num_conv": 64,
